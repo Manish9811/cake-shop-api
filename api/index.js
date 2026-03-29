@@ -1,9 +1,10 @@
 import express from "express";
-import sequelize from "../config/dbConfig.js"; // relative path
-import dotenv from "dotenv";
+import serverless from "serverless-http"; // wrap Express
+import sequelize from "../config/dbConfig.js";
 import { AuthRouter } from "../Routes/auth.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Cake Shop API 🚀");
 });
 
-// ✅ Database connection (run once per serverless instance)
+// DB connection (reuse global for serverless)
 if (!global.__sequelize) {
   global.__sequelize = sequelize;
   sequelize.authenticate()
@@ -32,5 +33,5 @@ if (!global.__sequelize) {
     .catch(err => console.error("❌ DB error:", err));
 }
 
-// ❗ Export app for Vercel serverless
-export default app;
+// Wrap Express app for Vercel serverless
+export default serverless(app);

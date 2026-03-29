@@ -1,5 +1,5 @@
 import express from "express";
-import sequelize from "../config/dbConfig.js"; // adjust path
+import sequelize from "../config/dbConfig.js"; // relative path
 import dotenv from "dotenv";
 import { AuthRouter } from "../Routes/auth.js";
 import cookieParser from "cookie-parser";
@@ -9,25 +9,28 @@ dotenv.config();
 
 const app = express();
 
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
-
 app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
 
-// routes
+// Routes
 app.use("/api/auth", AuthRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Cake Shop API 🚀");
 });
 
-// 🔥 VERY IMPORTANT: connect DB WITHOUT blocking
-sequelize.authenticate()
-  .then(() => console.log("✅ DB connected"))
-  .catch(err => console.error("❌ DB error:", err));
+// ✅ Database connection (run once per serverless instance)
+if (!global.__sequelize) {
+  global.__sequelize = sequelize;
+  sequelize.authenticate()
+    .then(() => console.log("✅ DB connected"))
+    .catch(err => console.error("❌ DB error:", err));
+}
 
-// ❗ EXPORT instead of listen
+// ❗ Export app for Vercel serverless
 export default app;

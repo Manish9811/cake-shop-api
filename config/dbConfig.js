@@ -1,22 +1,3 @@
-// import { Sequelize } from "sequelize";
-// import dotenv from "dotenv";
-
-// dotenv.config();
-
-// const sequelize = new Sequelize(process.env.DATABASE_URL, {
-//   dialect: "postgres",
-//   protocol: "postgres",
-//   logging: false,
-//   dialectOptions: {
-//     ssl: {
-//       require: true,
-//       rejectUnauthorized: false, // important for Neon
-//     },
-//   },
-// });
-
-// export default sequelize;
-
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 
@@ -33,7 +14,7 @@ const sequelize = new Sequelize(
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false, // needed for Neon / serverless
+        rejectUnauthorized: false, // Neon needs this for SSL
       },
     },
   }
